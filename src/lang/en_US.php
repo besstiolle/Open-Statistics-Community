@@ -1,27 +1,27 @@
 <?php
 $lang['friendlyname'] = 'Open Statistics Community';
-$lang['postinstall'] = 'La version %s du module a &eacute;t&eacute; install&eacute;e.';
-$lang['postuninstall'] = 'Le module a &eacute;t&eacute; d&eacute;sinstall&eacute; avec succ&egrave;s';
-$lang['really_uninstall'] = 'Etes-vous sur de vouloir desinstaller le module de stats?';
-$lang['uninstalled'] = 'Module d&eacute;sinstall&eacute;.';
-$lang['installed'] = 'La version %s du module a &eacute;t&eacute; install&eacute;e.';
-$lang['upgraded'] = 'La nouvelle version %s du module a &eacute;t&eacute; mise &agrave; jour.';
+$lang['postinstall'] = 'Module version %s installed';
+$lang['postuninstall'] = 'Module Uninstalled.';
+$lang['really_uninstall'] = 'Really? You\'re sure you want to uninstall this module?';
+$lang['uninstalled'] = 'Module Uninstalled.';
+$lang['installed'] = 'Module version %s installed';
+$lang['upgraded'] = 'Module version %s updated';
 
-$lang['title_configuration'] = 'Configuration du client';
-$lang['title_historique'] = 'Historique des envois';
+$lang['title_configuration'] = 'Client Configuration';
+$lang['title_historique'] = 'Transfer History';
 
 
-$lang['noCniDefined'] = 'Aucune CNI d&eacute;finie actuellement';
-$lang['back'] = 'Retour &agrave; l\'accueil';
-$lang['reset_cni'] = 'r&eacute;initialiser la CNI';
+$lang['noCniDefined'] = 'No national identity card (NIC) is currently defined';
+$lang['back'] = 'Back to home';
+$lang['reset_cni'] = 'reset the national identity card (NIC)';
 
-$lang['idtext'] = 'Num&eacute;ro d\'envoi';
-$lang['datetext'] = 'Date d\'envoi';
-$lang['responsetext'] = 'R&eacute;ponse du serveur';
+$lang['idtext'] = 'Transaction number';
+$lang['datetext'] = 'Transaction date';
+$lang['responsetext'] = 'Server response';
 
-$lang['saveConfig'] = 'sauvegarder ma configuration';
-$lang['sendReport'] = 'Envoyer la sauce';
-$lang['test_reseau'] = 'Tester le r&eacute;seau';
+$lang['saveConfig'] = 'Save my configuration';
+$lang['sendReport'] = 'Send the gift package';
+$lang['test_reseau'] = 'Test the network';
 
 
 $lang['allow_send_report'] = 'J\'autorise &agrave; envoyer les rapports de statistiques';
