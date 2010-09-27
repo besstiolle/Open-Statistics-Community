@@ -74,4 +74,73 @@ function sendDatasFOpen($url,$data)
 	return 0;
 }
 
+function testConnexion($module,$smarty,$myConnexion)
+{
+	
+	$urlTest = $module->GetPreference("cryptageUrl");
+	$urlTest = $module->_estLocalhost($urlTest);
+
+	$smarty->assign('serveur', $urlTest);
+
+
+	$urlTest .= "/modules/OpenStatisticsCommunityServer/testReseau.php";
+
+	/** Test du mode de connexion Fopen **/
+	$myConnexion->fopen = new stdClass;
+	$myConnexion->fopen->actif = false;
+	$myConnexion->fopen->usable = false;
+	$myConnexion->fopen->defaut = false;
+	if(@ini_get('allow_url_fopen')) {
+		$myConnexion->fopen->actif = true;
+		$file = @fopen ($urlTest, "r");
+		$content = "";
+		if ($file) {
+			while (!feof ($file)) {$content .= fgets ($file, 1024);}
+			fclose($file);
+			if($content != "")
+			{
+				$myConnexion->fopen->usable = true;
+				$myConnexion->fopen->defaut = true;
+			} 
+		}
+	} 
+
+
+	/** Test du mode de connexion cUrl **/
+	$myConnexion->curl = new stdClass;
+	$myConnexion->curl->actif = false;
+	$myConnexion->curl->usable = false;
+	$myConnexion->curl->defaut = false;
+
+	if(function_exists('curl_init')) {
+		$myConnexion->curl->actif = true;
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_URL, $urlTest);
+		curl_setopt($curl, CURLOPT_HEADER, 0);
+		$content = curl_exec($curl);
+		curl_close($curl);
+		if($content != "")
+		{
+			$myConnexion->curl->out = true;
+			if($content == "0");
+			{
+				$myConnexion->curl->in = true;
+				$myConnexion->curl->usable = true;
+				if(!$myConnexion->fopen->defaut)
+				{	
+					$myConnexion->curl->defaut = true;
+				}
+			}
+		} 
+	}
+
+	/** Test du mode de connexion image simple **/
+	/*$myConnexion->img = new stdClass;
+	$myConnexion->img->url = "$urlTest&img=simple";
+	$myConnexion->img->urlrep = "$urlTest&img=retour";*/
+	
+	return $myConnexion;
+}
+
 ?>

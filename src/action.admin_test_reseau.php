@@ -34,74 +34,10 @@ if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
   return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
 }
 
+//On lance les tests de réseau
+require_once(dirname(__FILE__).'/function.connexionTools.php');
 $this->SetPreference("cryptageMethode", "");
-
-$myConnexion = new stdClass;
-$urlTest = $this->GetPreference("cryptageUrl");
-
-$urlTest = $this->_estLocalhost($urlTest);
-
-$smarty->assign('serveur', $urlTest);
-
-
-$urlTest .= "/modules/OpenStatisticsCommunityServer/testReseau.php";
-
-/** Test du mode de connexion Fopen **/
-$myConnexion->fopen = new stdClass;
-$myConnexion->fopen->actif = false;
-$myConnexion->fopen->usable = false;
-$myConnexion->fopen->defaut = false;
-if(@ini_get('allow_url_fopen')) {
-	$myConnexion->fopen->actif = true;
-	$file = @fopen ($urlTest, "r");
-	$content = "";
-	if ($file) {
-		while (!feof ($file)) {$content .= fgets ($file, 1024);}
-		fclose($file);
-		if($content != "")
-		{
-			$myConnexion->fopen->usable = true;
-			$myConnexion->fopen->defaut = true;
-		} 
-	}
-} 
-
-
-/** Test du mode de connexion cUrl **/
-$myConnexion->curl = new stdClass;
-$myConnexion->curl->actif = false;
-$myConnexion->curl->usable = false;
-$myConnexion->curl->defaut = false;
-
-if(function_exists('curl_init')) {
-	$myConnexion->curl->actif = true;
-	$curl = curl_init();
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($curl, CURLOPT_URL, $urlTest);
-	curl_setopt($curl, CURLOPT_HEADER, 0);
-	$content = curl_exec($curl);
-	curl_close($curl);
-	if($content != "")
-	{
-		$myConnexion->curl->out = true;
-		if($content == "0");
-		{
-			$myConnexion->curl->in = true;
-			$myConnexion->curl->usable = true;
-			if(!$myConnexion->fopen->defaut)
-			{	
-				$myConnexion->curl->defaut = true;
-			}
-		}
-	} 
-}
-
-/** Test du mode de connexion image simple **/
-/*$myConnexion->img = new stdClass;
-$myConnexion->img->url = "$urlTest&img=simple";
-$myConnexion->img->urlrep = "$urlTest&img=retour";*/
-
-
+$myConnexion = testConnexion($this,$smarty,new stdClass);
 $this->SetPreference("cryptageMethode", serialize($myConnexion));
 
 

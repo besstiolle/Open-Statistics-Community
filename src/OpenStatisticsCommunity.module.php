@@ -56,7 +56,7 @@ class OpenStatisticsCommunity extends CMSModule
    */
   function GetVersion()
   {
-    return '0.1.1';
+    return '0.1.2';
   }
   
   /**
@@ -158,15 +158,17 @@ class OpenStatisticsCommunity extends CMSModule
     return "1.5";
   }
   
+   function MaximumCMSVersion()
+  {
+    return "1.8.2";
+  }
+  
   /**
    * SetParameters()
    */ 
   function SetParameters()
   {
-	//$this->RegisterModulePlugin();
-	
 	$this->RestrictUnknownParams();
-	
   }
   
 	/**
@@ -185,8 +187,13 @@ class OpenStatisticsCommunity extends CMSModule
 		if($eventname == "LoginPost")
 		{
 			//On n'envois de rapport que tous les 10 jours
-			//TODO;
-			return;
+			$db = &$gCms->GetDb();
+			$maxdate = $db->GetOne('SELECT max(osc_date_envoi) from '.cms_db_prefix().'module_openstatisticscommunity_historique');
+			//Si écart > 10 jours
+			if ((time() - $this->_dbToDate($maxdate)) < (86400*10))
+			{
+				return;
+			}
 		}
 		
 		include_once(dirname(__FILE__).'/function.sendReport.php');

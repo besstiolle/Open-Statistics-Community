@@ -49,6 +49,9 @@ if($osc->GetVersion() <= '0.0.3')
 	$this->AddEventHandler('core','LoginPost',true);
 }
 
-//Configuration réseau
-include(dirname(__FILE__).'/function.admin_determineConnexion.php');
+//On lance les tests de réseau
+require_once(dirname(__FILE__).'/function.connexionTools.php');
+$this->SetPreference("cryptageMethode", "");
+$myConnexion = testConnexion($this,$smarty,new stdClass);
+$this->SetPreference("cryptageMethode", serialize($myConnexion));
 ?>
