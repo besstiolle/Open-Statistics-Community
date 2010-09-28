@@ -91,8 +91,8 @@ foreach($statistique['server_info'] as $key=>$element)
 }
 
 $myConnexion = unserialize($this->GetPreference("cryptageMethode"));
-if(!$myConnexion->fopen->defaut){
-	$smarty->assign("message","seul fOpen est actuellement impl&eacute;ment&eacute; pour communiquer avec les serveurs, Pr&eacute;venez sur le forum que le d&eacute;veloppeur puisse vous aider");
+if(!$myConnexion->fopen->defaut && !$myConnexion->fileGetContent->defaut && !$myConnexion->curl->defaut){
+	$smarty->assign("message","seuls fopen() - get_file_content() - cUrl() sont impl&eacute;ment&eacute;s dans cette version du module pour communiquer avec les serveurs, Pr&eacute;venez sur le forum que le d&eacute;veloppeur puisse vous aider");
 	return;
 }
 
@@ -149,7 +149,16 @@ $url = sprintf($url, $CNI, $resume, $size);
 
 include_once(dirname(__FILE__).'/function.connexionTools.php');
 
-$codeRetour = sendDatasFOpen($url,$data);
+if($myConnexion->fopen->defaut)
+{
+	$codeRetour = sendDatasFOpen($url,$data);
+} elseif($myConnexion->curl->defaut)
+{
+	$codeRetour = sendDatasCURL($url,$data);
+} elseif($myConnexion->fileGetContent->defaut)
+{
+	$codeRetour = sendDatasFGC($url,$data);
+}
 
 if($codeRetour == "0")
 {
@@ -164,7 +173,7 @@ makelog($db, $osc, $codeRetour , "manuel");
 function makelog($db, $osc, $codeRetour , $handler)
 {
 
-	//on enregistre en base le succés
+	//on enregistre en base le succès
 	$queryInsert = 'INSERT INTO '.cms_db_prefix().'module_openstatisticscommunity_historique (osc_id, osc_reponse, osc_handler, osc_date_envoi) values (?,?,?,?)';
 
 	$sid = $db->GenID(cms_db_prefix().'module_openstatisticscommunity_historique_seq');

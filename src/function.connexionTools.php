@@ -60,13 +60,9 @@ function sendDatasFOpen($url,$data)
 	//Connexions successives avec l'ID
 	for ($i = 1; $i <= $nbpacket; $i++)
 	{	
-//		echo $i." <br/>"; 
 		$partdata = substr($data,$maxsize * ($i-1), $maxsize);
-//		echo ($maxsize * ($i-1)).'<br/>';
-//		echo $partdata.'<br/>';
 		$content = '';
 		$file = @fopen ("$url&sid=$sid&packet=$i&partdata=$partdata", "r");
-//		echo "$url&sid=$sid&packet=$i&partdata=$partdata\n";
 		if (!$file) {echo "toto";return "#04";}
 		while (!feof ($file)) {$content .= fgets ($file, 1024);}
 		fclose($file);
@@ -76,16 +72,74 @@ function sendDatasFOpen($url,$data)
 	return 0;
 }
 
+
+function sendDatasCURL($url,$data)
+{
+	$data = str_replace(array('+','#','&'), array('%2B','%23','%26'), $data);
+	
+	$maxsize = 1000;
+	$size = strlen($data);
+	$nbpacket = ceil($size/$maxsize);
+	
+	//Récupération d'un Id de connexion
+	$curl = curl_init();
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($curl, CURLOPT_URL, "$url&new=$nbpacket");
+	curl_setopt($curl, CURLOPT_HEADER, 0);
+	$sid = curl_exec($curl);
+	curl_close($curl);
+	if($sid == "" || !is_numeric($sid)){echo "demande SID : $sid<br/>";return "#03";}
+	
+	//Connexions successives avec l'ID
+	for ($i = 1; $i <= $nbpacket; $i++)
+	{	
+		$partdata = substr($data,$maxsize * ($i-1), $maxsize);
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_URL, "$url&sid=$sid&packet=$i&partdata=$partdata");
+		curl_setopt($curl, CURLOPT_HEADER, 0);
+		$content = curl_exec($curl);
+		curl_close($curl);
+		if($content != "0"){echo $content;return "#05";}
+	}
+	
+	return 0;
+}
+
+function sendDatasFGC($url,$data)
+{
+	$data = str_replace(array('+','#','&'), array('%2B','%23','%26'), $data);
+	
+	$maxsize = 1000;
+	$size = strlen($data);
+	$nbpacket = ceil($size/$maxsize);
+	
+	//Récupération d'un Id de connexion
+	$sid = file_get_contents("$url&new=$nbpacket");
+	if($sid == "" || !is_numeric($sid)){echo "demande SID : $sid<br/>";return "#03";}
+		
+	//Connexions successives avec l'ID
+	for ($i = 1; $i <= $nbpacket; $i++)
+	{	
+		$partdata = substr($data,$maxsize * ($i-1), $maxsize);
+		$content = file_get_contents("$url&sid=$sid&packet=$i&partdata=$partdata");
+		if($content != "0"){echo $content;return "#05";}
+	}
+	
+	return 0;
+}
+
 function testConnexion($module,$smarty,$myConnexion)
 {
+	$hasDefault = false;
 	
-	$urlTest = $module->GetPreference("cryptageUrl");
-	$urlTest = $module->_estLocalhost($urlTest);
+	$urlBase = $module->GetPreference("cryptageUrl");
+	$urlBase = $module->_estLocalhost($urlBase);
 
-	$smarty->assign('serveur', $urlTest);
+	$smarty->assign('serveur', $urlBase);
 
-
-	$urlTest .= "/modules/OpenStatisticsCommunityServer/testReseau.php";
+	$urlComplement = "/modules/OpenStatisticsCommunityServer/testReseau.php";
+	$urlTest = $urlBase.$urlComplement;
 
 	/** Test du mode de connexion Fopen **/
 	$myConnexion->fopen = new stdClass;
@@ -103,6 +157,7 @@ function testConnexion($module,$smarty,$myConnexion)
 			{
 				$myConnexion->fopen->usable = true;
 				$myConnexion->fopen->defaut = true;
+				$hasDefault = true;
 			} 
 		}
 	} 
@@ -127,16 +182,70 @@ function testConnexion($module,$smarty,$myConnexion)
 			$myConnexion->curl->out = true;
 			if($content == "0");
 			{
-				$myConnexion->curl->in = true;
 				$myConnexion->curl->usable = true;
-				if(!$myConnexion->fopen->defaut)
+				if(!$hasDefault)
 				{	
 					$myConnexion->curl->defaut = true;
+					$hasDefault = true;
 				}
 			}
 		} 
 	}
+	
+	
+	/** Test du mode de connexion file_get_contents **/
+	$myConnexion->fileGetContent = new stdClass;
+	$myConnexion->fileGetContent->actif = false;
+	$myConnexion->fileGetContent->usable = false;
+	$myConnexion->fileGetContent->defaut = false;
+	$content = @file_get_contents($urlTest);
+	$myConnexion->fileGetContent->actif = true;
+	if($content != "")
+	{
+		$myConnexion->fileGetContent->usable = true;
+		if(!$hasDefault)
+		{	
+			$myConnexion->fileGetContent->defaut = true;
+			$hasDefault = true;
+		}
+	} 
+	
+	
 
+	/** Test du mode de connexion fsockopen **/
+	$myConnexion->fsockopen = new stdClass;
+	$myConnexion->fsockopen->actif = false;
+	$myConnexion->fsockopen->usable = false;
+	$myConnexion->fsockopen->defaut = false;
+	
+	
+	//TODO : poursuivre le code avec fsockopen
+	/*
+	$file = @fsockopen("cmsmadesimple.fr", 80);
+	$content = "";
+	if ($file) {
+		$myConnexion->fsockopen->actif = true;
+		stream_set_timeout($file,2);        
+		fputs($file, "GET /$urlComplement HTTP/1.0\r\n\r\n");		
+		while (!feof ($file)) {$content .= fgets ($file, 1024);}
+		fclose($file);
+		if($content != "")
+		{
+			$myConnexion->fsockopen->usable = true;
+			if(!$hasDefault)
+			{	
+				$myConnexion->fsockopen->defaut = true;
+				$hasDefault = true;
+			}
+			die($content);
+		} 
+	} else
+	{
+		die("Impossible d'ouvrir\n" . substr($urlBase,7));
+	}*/
+	
+	
+	
 	/** Test du mode de connexion image simple **/
 	/*$myConnexion->img = new stdClass;
 	$myConnexion->img->url = "$urlTest&img=simple";

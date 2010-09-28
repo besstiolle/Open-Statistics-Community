@@ -11,7 +11,7 @@
 				<td>Communique avec l'ext&eacute;rieur : </td><td>{if $myConnexion->fopen->usable}{$img_true}{else}{$img_false}{/if}</td>
 			</tr>
 			<tr>
-				<td>Sera utilis&eacute; par d&eacute;faut</td><td>{if $myConnexion->fopen->defaut}{$img_true}{else}{$img_false}{/if}</td>
+				<td>Sera utilis&eacute; par d&eacute;faut : </td><td>{if $myConnexion->fopen->defaut}{$img_true}{else}{$img_false}{/if}</td>
 			</tr>
 		</table>
 	<br/><br/>{$backlink}
@@ -27,11 +27,45 @@
 				<td>Communique avec l'ext&eacute;rieur : </td><td>{if $myConnexion->curl->usable}{$img_true}{else}{$img_false}{/if}</td>
 			</tr>
 			<tr>
-				<td>Sera utilis&eacute; par d&eacute;faut</td><td>{if $myConnexion->curl->defaut}{$img_true}{else}{$img_false}{/if}</td>
+				<td>Sera utilis&eacute; par d&eacute;faut : </td><td>{if $myConnexion->curl->defaut}{$img_true}{else}{$img_false}{/if}</td>
 			</tr>
 		</table>
 	<br/><br/>{$backlink}
-</fieldset>{*
+</fieldset>
+
+<fieldset>
+	<legend>Test de la fonction file_get_content</legend>
+		<table>
+			<tr>
+				<td>Inclu dans la version php : </td><td>{if $myConnexion->fileGetContent->actif}{$img_true}{else}{$img_false}{/if}</td>
+			</tr>
+			<tr>
+				<td>Communique avec l'ext&eacute;rieur : </td><td>{if $myConnexion->fileGetContent->usable}{$img_true}{else}{$img_false}{/if}</td>
+			</tr>
+			<tr>
+				<td>Sera utilis&eacute; par d&eacute;faut : </td><td>{if $myConnexion->fileGetContent->defaut}{$img_true}{else}{$img_false}{/if}</td>
+			</tr>
+		</table>
+	<br/><br/>{$backlink}
+</fieldset>
+{*
+<fieldset>
+	<legend>Test de la librairie php fsockopen</legend>
+		<table>
+			<tr>
+				<td>Inclu dans la version php : </td><td>{if $myConnexion->fsockopen->actif}{$img_true}{else}{$img_false}{/if}</td>
+			</tr>
+			<tr>
+				<td>Communique avec l'ext&eacute;rieur : </td><td>{if $myConnexion->fsockopen->usable}{$img_true}{else}{$img_false}{/if}</td>
+			</tr>
+			<tr>
+				<td>Sera utilis&eacute; par d&eacute;faut : </td><td>{if $myConnexion->fsockopen->defaut}{$img_true}{else}{$img_false}{/if}</td>
+			</tr>
+		</table>
+	<br/><br/>{$backlink}
+</fieldset>
+*}
+{*
 <fieldset>
 	<legend>Test de l'image distante simple</legend>
 		

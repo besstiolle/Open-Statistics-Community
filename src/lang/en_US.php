@@ -45,9 +45,9 @@ $lang['allow_send_server_information'] = 'Server configuration';
 $lang['prefsupdated'] = 'Param&eacute;trage mis &agrave; jour';
 //$lang['emailKo'] = 'email non valide';
 
-//$lang['msgConnexionKO1'] = 'Impossible d\'utiliser le module sur votre installation car aucune m&eacute;thode ne permet de communiquer avec l\'exterieur';
-//$lang['msgConnexionKO2'] = 'V&eacute;rifiez votre pare-feu et la configuration de votre proxy. Cette erreur arrive souvent lorsque l\'on d&eacute;veloppe son site internet en local (wamp, Xamp, easyPhp, ...) le probl&egrave;me se r&eacute;soud en g&eacute;n&eacute;ral une fois le site install&eacute; en ligne.';
-//$lang['msgConnexionKO3'] = 'Vous pouvez &agrave; tout moment refaire un test de votre configuration en cliquant ici : ';
+$lang['msgConnexionKO1'] = 'Impossible d\'utiliser le module sur votre installation car aucune m&eacute;thode ne permet de communiquer avec l\'exterieur';
+$lang['msgConnexionKO2'] = 'V&eacute;rifiez votre pare-feu et la configuration de votre proxy. Cette erreur arrive souvent lorsque l\'on d&eacute;veloppe son site internet en local (wamp, Xamp, easyPhp, ...) le probl&egrave;me se r&eacute;soud en g&eacute;n&eacute;ral une fois le site install&eacute; en ligne.';
+$lang['msgConnexionKO3'] = 'Vous pouvez &agrave; tout moment refaire un test de votre configuration en cliquant ici : ';
 
 $lang['moddescription'] = 'This module is a generator of anonymous usage statistics cmsmadesimple. More informations on <a href="http://www.cmsmadesimple.fr/forum/viewtopic.php?pid=17090#p17090">the project page</a>';
 

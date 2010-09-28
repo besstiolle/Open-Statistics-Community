@@ -178,11 +178,14 @@ if($myConnexion == null)
 {
 	if($myConnexion->fopen->defaut)
 	{
-		$default_connexion = "Connexion en fopen par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
+		$default_connexion = "Connexion par fopen() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
 	} elseif($myConnexion->curl->defaut)
 	{
-		$default_connexion = "Connexion en cUrl par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
-	} else
+		$default_connexion = "Connexion par cUrl() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
+	} elseif($myConnexion->fileGetContent->defaut)
+	{
+		$default_connexion = "Connexion par file_get_content() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
+	}else
 	{
 		$default_connexion = "Aucune connexion disponible actuellement. Vous pouvez relancer un test de configuration afin de rafraichir les r&eacute;sultats.";
 		$error_connexion = true;
