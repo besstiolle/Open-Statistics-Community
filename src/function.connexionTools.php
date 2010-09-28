@@ -7,11 +7,13 @@
 # Version: béta de Kevin Danezis Aka "Bess"
 # Author can be join on the french forum : http://www.cmsmadesimple.fr/forum 
 #        or by email : statistiques [plop] cmsmadesimple [plap] fr
-# Method: 
+# Method: Utilitaire de connexion réseau
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
 # This project's homepage is: http://www.cmsmadesimple.org
 # The module's homepage is: http://www.cmsmadesimple.fr/forum/viewtopic.php?id=2908
+# The module's forge id : http://dev.cmsmadesimple.org/projects/osc
+# The statistiques homepage is: http://www.cmsmadesimple.fr/statistiques
 #-------------------------------------------------------------------------
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
