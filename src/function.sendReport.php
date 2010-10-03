@@ -1,10 +1,10 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: OpenStatisticsCommunity - un client légé envoyant toute une série de 
-#         statistiques de manière anonyme sur l'utilisation faites de 
+# Module: OpenStatisticsCommunity - un client lege envoyant toute une serie de 
+#         statistiques de maniere anonyme sur l'utilisation faites de 
 #         Cms Made Simple. Pour toute information, consultez la page d'accueil 
-#         du projet : http://www.cmsmadesimple.fr/rts-client.html
-# Version: béta de Kevin Danezis Aka "Bess"
+#         du projet : http://www.cmsmadesimple.fr/statistiques
+# Version: beta de Kevin Danezis Aka "Bess"
 # Author can be join on the french forum : http://www.cmsmadesimple.fr/forum 
 #        or by email : statistiques [plop] cmsmadesimple [plap] fr
 # Method: envoi des rapports
@@ -31,7 +31,7 @@
 #-------------------------------------------------------------------------
 if (!isset($gCms)) exit;
 
-// Vérification de la permission
+// Verification de la permission
 if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
   return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
 }
@@ -39,7 +39,7 @@ if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
 $db =& $gCms->GetDb();
 $osc =& $gCms->modules["OpenStatisticsCommunity"]['object'];
 
-//Vérification des directives utilisateurs
+//Verification des directives utilisateurs
 $autorisations = unserialize($this->GetPreference('autorisations'));
 if(!isset($autorisations['all']) || !$autorisations['all'])
 {
@@ -47,10 +47,11 @@ if(!isset($autorisations['all']) || !$autorisations['all'])
 	return;
 }
 
+include_once(dirname(__FILE__).'/function.connexionTools.php');
 include_once(dirname(__FILE__).'/function.configurationTools.php');
 $statistique = getConfiguration();
 
-//On ne garde que les parties explicitement demandées.
+//On ne garde que les parties explicitement demandees.
 if(!isset($autorisations['cms_version']) || !$autorisations['cms_version'])
 {
 	unset($statistique['cms_version']);
@@ -65,7 +66,7 @@ foreach($statistique['installed_modules'] as $element)
 	}
 	$i++;
 }
-//Réindex du tableau
+//Reindex du tableau
 $statistique['installed_modules'] = array_values($statistique['installed_modules']);
 
 foreach($statistique['config_info'] as $key=>$element)
@@ -91,36 +92,37 @@ foreach($statistique['server_info'] as $key=>$element)
 }
 
 $myConnexion = unserialize($this->GetPreference("cryptageMethode"));
-if(!$myConnexion->fopen->defaut && !$myConnexion->fileGetContent->defaut && !$myConnexion->curl->defaut){
-	$smarty->assign("message","seuls fopen() - get_file_content() - cUrl() sont impl&eacute;ment&eacute;s dans cette version du module pour communiquer avec les serveurs, Pr&eacute;venez sur le forum que le d&eacute;veloppeur puisse vous aider");
+if(!$myConnexion->hasDefault){
+	$smarty->assign("message","seuls fopen() - get_file_content() - cUrl() - fsockopen() sont impl&eacute;ment&eacute;s dans cette version du module pour communiquer avec les serveurs, Pr&eacute;venez sur le forum que le d&eacute;veloppeur puisse vous aider");
 	return;
 }
 
 $cle = $this->GetPreference("cryptageCle");
 $CNI = $this->GetPreference("cryptageCNI");
-$url = $this->GetPreference("cryptageUrl");
-$url = $this->_estLocalhost($url);
-$url = $url."/modules/OpenStatisticsCommunityServer";
+
+$urlBase = $this->GetPreference("cryptageUrl_Base");
+$urlRepertoire = $this->GetPreference("cryptageUrl_Repertoire");
+$retour =  $this->_estLocalhost($urlBase, $urlRepertoire);
+$urlBase = $retour[0];
+$urlRepertoire = $retour[1];
+$urlRepertoire .= "/modules/OpenStatisticsCommunityServer";
 
 
-//Nécessité de récupérer une nouvelle CNI
+//Necessite de recuperer une nouvelle CNI
 if(!isset($cle) || empty($cle) || !isset($CNI) || empty($CNI))
 {
-	//echo "récupe du CNI : $url/ajax.askCNI.php";
-	$file = fopen ("$url/ajax.askCNI.php", "r");
-	if (!$file) {
+	$urlComplementaire = "/ajax.askCNI.php";
+	$content = call($myConnexion,$urlBase, $urlRepertoire.$urlComplementaire);
+	
+	if("#02" == $content)
+	{
 		$smarty->assign("message","<p>Impossible de lire la page.</p>");
 		return;
-	}
-	$data = "";
+	} 
 	
-	while (!feof ($file)) {$data .= fgets ($file, 1024);}
-	
-	fclose($file);
-	$out = preg_split("/\|/", $data);
+	$out = preg_split("/\|/", $content);
 	$CNI = $out[0];
 	$cle = $out[1];
-	
 	
 	if(isset($cle) && isset($CNI) && strlen($cle) == 50 && strlen($CNI) == 50)
 	{
@@ -128,7 +130,7 @@ if(!isset($cle) || empty($cle) || !isset($CNI) || empty($CNI))
 		$this->SetPreference("cryptageCNI", $CNI);
 	} else
 	{
-		$smarty->assign("message","Mauvaise r&eacture;ponse du serveur : $data");
+		$smarty->assign("message","Mauvaise r&eacute;ponse du serveur : $data");
 		makelog($db, $osc, "askCNI ko" , "manuel");
 		return;
 	}
@@ -140,25 +142,41 @@ $data = $this->_Crypte(serialize($statistique), $cle);
 $size = strlen($data);
 $resume = md5($data);
 
-//Remplacement des 3 caractères foireux
-//$data = str_replace(array('+','#','&'), array('%2B','%23','%26'), $data);
+//Remplacement des 3 caracteres foireux
+$data = str_replace(array('+','#','&'), array('%2B','%23','%26'), $data);
 
-$url .= "/ajax.saveResponseMulti.php?CNI=%s&RESUME=%s&SIZE=%s";
-$url = sprintf($url, $CNI, $resume, $size);
+$urlComplementaire = "/ajax.saveResponseMulti.php?CNI=%s&RESUME=%s&SIZE=%s";
+$urlComplementaire = sprintf($urlComplementaire, $CNI, $resume, $size);
 
 
-include_once(dirname(__FILE__).'/function.connexionTools.php');
 
-if($myConnexion->fopen->defaut)
-{
-	$codeRetour = sendDatasFOpen($url,$data);
-} elseif($myConnexion->curl->defaut)
-{
-	$codeRetour = sendDatasCURL($url,$data);
-} elseif($myConnexion->fileGetContent->defaut)
-{
-	$codeRetour = sendDatasFGC($url,$data);
-}
+	$maxsize = 1000;
+	$size = strlen($data);
+	$nbpacket = ceil($size/$maxsize);
+	$codeRetour = "0";
+	
+	//Recuperation d'un Id de connexion
+	$sid = call($myConnexion,$urlBase, $urlRepertoire.$urlComplementaire."&new=".$nbpacket);
+	if($sid == "" || !is_numeric($sid))
+	{
+		echo "demande SID KO : $sid<br/>\n";
+		$codeRetour = "#03";
+	}
+	else
+	{	
+		//Connexions successives avec l'ID
+		for ($i = 1; $i <= $nbpacket; $i++)
+		{	
+			$partdata = substr($data,$maxsize * ($i-1), $maxsize);
+			$content = call($myConnexion,$urlBase, $urlRepertoire.$urlComplementaire."&sid=$sid&packet=$i&partdata=$partdata");
+			if($content != "0")
+			{
+				echo "reponse serveur KO : $content<br/>\n";
+				$codeRetour = "#05";
+			}
+		}
+	}
+
 
 if($codeRetour == "0")
 {
@@ -173,7 +191,7 @@ makelog($db, $osc, $codeRetour , "manuel");
 function makelog($db, $osc, $codeRetour , $handler)
 {
 
-	//on enregistre en base le succès
+	//on enregistre en base le succes
 	$queryInsert = 'INSERT INTO '.cms_db_prefix().'module_openstatisticscommunity_historique (osc_id, osc_reponse, osc_handler, osc_date_envoi) values (?,?,?,?)';
 
 	$sid = $db->GenID(cms_db_prefix().'module_openstatisticscommunity_historique_seq');

@@ -1,10 +1,10 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: OpenStatisticsCommunity - un client légé envoyant toute une série de 
-#         statistiques de manière anonyme sur l'utilisation faites de 
+# Module: OpenStatisticsCommunity - un client lege envoyant toute une serie de 
+#         statistiques de maniere anonyme sur l'utilisation faites de 
 #         Cms Made Simple. Pour toute information, consultez la page d'accueil 
-#         du projet : http://www.cmsmadesimple.fr/rts-client.html
-# Version: béta de Kevin Danezis Aka "Bess"
+#         du projet : http://www.cmsmadesimple.fr/statistiques
+# Version: beta de Kevin Danezis Aka "Bess"
 # Author can be join on the french forum : http://www.cmsmadesimple.fr/forum 
 #        or by email : statistiques [plop] cmsmadesimple [plap] fr
 # Method: admin_configurationtab.class
@@ -31,7 +31,7 @@
 #-------------------------------------------------------------------------
 if (!isset($gCms)) exit;
 
-// Vérification de la permission
+// Verification de la permission
 if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
   return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
 }
@@ -158,7 +158,7 @@ $this->SetPreference('autorisations',serialize($newAut));
 //Bouton de reset du CNI
 $resetlink =($myCni == null?"":$this->CreateLink($id, 'defaultadmin', $returnid, 'Cliquez ici pour r&eacute;initialiser la CNI',array('eraseCNI'=>true)));
 
-//Bouton de contrôle réseau
+//Bouton de controle reseau
 $admintheme =& $gCms->variables['admintheme'];
 $reseaulink = $this->CreateLink($id, 'admin_test_reseau', $returnid, $admintheme->DisplayImage('icons/system/info.gif', $this->Lang('test_reseau'),'','','systemicon'));
 
@@ -168,29 +168,36 @@ $reseaulink = $this->CreateLink($id, 'admin_test_reseau', $returnid, $admintheme
 $smarty->assign('resetlink', $resetlink);
 $smarty->assign('reseaulink', $reseaulink);
 
-$default_connexion = "aucune connexion trouvée";
+$default_connexion = "aucune connexion trouv&eacute;e";
 $myConnexion = unserialize($this->GetPreference("cryptageMethode"));
 $error_connexion = false;
 if($myConnexion == null)
 {
-	$default_connexion = "Info non disponible, lancez un test de configuration";
-} else
-{
-	if($myConnexion->fopen->defaut)
-	{
-		$default_connexion = "Connexion par fopen() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
-	} elseif($myConnexion->curl->defaut)
-	{
-		$default_connexion = "Connexion par cUrl() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
-	} elseif($myConnexion->fileGetContent->defaut)
-	{
-		$default_connexion = "Connexion par file_get_content() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
-	}else
-	{
-		$default_connexion = "Aucune connexion disponible actuellement. Vous pouvez relancer un test de configuration afin de rafraichir les r&eacute;sultats.";
-		$error_connexion = true;
-	}
+	//On lance les tests de reseau
+	require_once(dirname(__FILE__).'/function.connexionTools.php');
+	$this->SetPreference("cryptageMethode", "");
+	$myConnexion = testConnexion($this,$smarty,new stdClass);
+	$this->SetPreference("cryptageMethode", serialize($myConnexion));
 }
+
+if($myConnexion->fopen->defaut)
+{
+	$default_connexion = "Connexion par fopen() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
+} elseif($myConnexion->curl->defaut)
+{
+	$default_connexion = "Connexion par cUrl() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
+} elseif($myConnexion->fileGetContent->defaut)
+{
+	$default_connexion = "Connexion par file_get_content() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
+} elseif($myConnexion->fsockopen->defaut)
+{
+	$default_connexion = "Connexion par fsockopen() par d&eacute;faut ".$admintheme->DisplayImage('icons/system/true.gif');
+}else
+{
+	$default_connexion = "Aucune connexion disponible actuellement. Vous pouvez relancer un test de configuration afin de rafraichir les r&eacute;sultats.";
+	$error_connexion = true;
+}
+
 
 //Test des connexions sortantes
 $smarty->assign('error_connexion', $error_connexion);

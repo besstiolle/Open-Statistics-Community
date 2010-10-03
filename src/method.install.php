@@ -1,10 +1,10 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: OpenStatisticsCommunity - un client légé envoyant toute une série de 
-#         statistiques de manière anonyme sur l'utilisation faites de 
+# Module: OpenStatisticsCommunity - un client lege envoyant toute une serie de 
+#         statistiques de maniere anonyme sur l'utilisation faites de 
 #         Cms Made Simple. Pour toute information, consultez la page d'accueil 
-#         du projet : http://www.cmsmadesimple.fr/rts-client.html
-# Version: béta de Kevin Danezis Aka "Bess"
+#         du projet : http://www.cmsmadesimple.fr/statistiques
+# Version: beta de Kevin Danezis Aka "Bess"
 # Author can be join on the french forum : http://www.cmsmadesimple.fr/forum 
 #        or by email : statistiques [plop] cmsmadesimple [plap] fr
 # Method: Install
@@ -47,7 +47,7 @@ $flds = "
 	 osc_date_envoi " . CMS_ADODB_DT . "
 ";
 			
-//TODO : vérifier les erreurs
+//TODO : verifier les erreurs
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_openstatisticscommunity_historique",
 				   $flds, 
 				   $taboptarray);
@@ -69,16 +69,17 @@ $this->CreatePermission('Set Open Statistics Community Prefs','OSC : Set Prefs')
 // create a preference
 $this->SetPreference("cryptageCle", "");
 $this->SetPreference("cryptageCNI", "");
-$this->SetPreference("cryptageUrl", "http://www.cmsmadesimple.fr");
+$this->SetPreference("cryptageUrl_Base", "http://www.cmsmadesimple.fr");
+$this->SetPreference("cryptageUrl_Repertoire", "");
 
-//Création de 4 handlers d'evènements : 
+//Creation de 4 handlers d'evenements : 
 // 	Installation d'un module
 $this->AddEventHandler('core','ModuleInstalled',true);
 // 	Desinstallation d'un module
 $this->AddEventHandler('core','ModuleUninstalled',true);
-// 	Mise à jour d'un module
+// 	Mise a jour d'un module
 $this->AddEventHandler('core','ModuleUpgraded',true);
-// 	Login (sous réserve d'une inaction depuis 10 jours)
+// 	Login (sous reserve d'une inaction depuis 10 jours)
 $this->AddEventHandler('core','LoginPost',true);
 
 // put mention into the admin log
@@ -86,9 +87,9 @@ $this->Audit( 0,
 	      $this->Lang('friendlyname'), 
 	      $this->Lang('installed', $this->GetVersion()) );
 		  
-//On lance les tests de réseau
+//On lance les tests de reseau
 require_once(dirname(__FILE__).'/function.connexionTools.php');
 $this->SetPreference("cryptageMethode", "");
 $myConnexion = testConnexion($this,$smarty,new stdClass);
-//$this->SetPreference("cryptageMethode", serialize($myConnexion));
+$this->SetPreference("cryptageMethode", serialize($myConnexion));
 ?>

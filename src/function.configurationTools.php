@@ -1,13 +1,13 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: OpenStatisticsCommunity - un client légé envoyant toute une série de 
-#         statistiques de manière anonyme sur l'utilisation faites de 
+# Module: OpenStatisticsCommunity - un client lege envoyant toute une serie de 
+#         statistiques de maniere anonyme sur l'utilisation faites de 
 #         Cms Made Simple. Pour toute information, consultez la page d'accueil 
-#         du projet : http://www.cmsmadesimple.fr/rts-client.html
-# Version: béta de Kevin Danezis Aka "Bess"
+#         du projet : http://www.cmsmadesimple.fr/statistiques
+# Version: beta de Kevin Danezis Aka "Bess"
 # Author can be join on the french forum : http://www.cmsmadesimple.fr/forum 
 #        or by email : besstiolle [plop] gmail [plap] com
-# Method: utilitaire d'analyse de la conf client (basé sur le travail original de Ted Kulp.)
+# Method: utilitaire d'analyse de la conf client (base sur le travail original de Ted Kulp.)
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
 # This project's homepage is: http://www.cmsmadesimple.org
@@ -32,7 +32,7 @@
 
 if (!isset($gCms)) exit;
 
-// Vérification de la permission
+// Verification de la permission
 if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
   return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
 }

@@ -76,4 +76,5 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 <p>Copyright &amp;copy; 2009, Kevin Danezis aka &quot;Bess&quot; <a href="mailto:besstiolle@gmail.com"><besstiolle@gmail.com></a>. All Rights Are Reserved.</p>
 <p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU Public License</a>. You must agree to this license before using the module.</p>
 ';
+$lang['alert_not_send'] = 'The last attempt to send statistics to the server has a failure. You should take a look and see what it is.'
 ?>

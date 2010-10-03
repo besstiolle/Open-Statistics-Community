@@ -1,10 +1,10 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: OpenStatisticsCommunity - un client légé envoyant toute une série de 
-#         statistiques de manière anonyme sur l'utilisation faites de 
+# Module: OpenStatisticsCommunity - un client lege envoyant toute une serie de 
+#         statistiques de maniere anonyme sur l'utilisation faites de 
 #         Cms Made Simple. Pour toute information, consultez la page d'accueil 
-#         du projet : http://www.cmsmadesimple.fr/rts-client.html
-# Version: béta de Kevin Danezis Aka "Bess"
+#         du projet : http://www.cmsmadesimple.fr/statistiques
+# Version: beta de Kevin Danezis Aka "Bess"
 # Author can be join on the french forum : http://www.cmsmadesimple.fr/forum 
 #        or by email : statistiques [plop] cmsmadesimple [plap] fr
 # Method: Upgrade
@@ -38,20 +38,28 @@ $osc =& $gCms->modules["OpenStatisticsCommunity"]['object'];
 
 if($osc->GetVersion() <= '0.0.3')
 {
-	//Suppression de param non utilisé en 0.1.0
+	//Suppression de param non utilise en 0.1.0
 	$this->RemovePreference("cryptageTmp");
 	
 	// 	Installation d'un module
 	$this->AddEventHandler('core','ModuleInstalled',true);
 	// 	Desinstallation d'un module
 	$this->AddEventHandler('core','ModuleUninstalled',true);
-	// 	Mise à jour d'un module
+	// 	Mise a jour d'un module
 	$this->AddEventHandler('core','ModuleUpgraded',true);
-	// 	Login (sous réserve d'une inaction depuis 10 jours)
+	// 	Login (sous reserve d'une inaction depuis 10 jours)
 	$this->AddEventHandler('core','LoginPost',true);
 }
 
-//On lance les tests de réseau
+if($osc->GetVersion() <= '0.1.4')
+{
+	//Suppression de param non utilise en 0.1.5
+	$this->RemovePreference("cryptageUrl");
+	$this->SetPreference("cryptageUrl_Base", "http://www.cmsmadesimple.fr");
+	$this->SetPreference("cryptageUrl_Repertoire", "");
+}
+
+//On lance les tests de reseau
 require_once(dirname(__FILE__).'/function.connexionTools.php');
 $this->SetPreference("cryptageMethode", "");
 $myConnexion = testConnexion($this,$smarty,new stdClass);

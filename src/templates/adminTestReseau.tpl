@@ -1,8 +1,9 @@
 
 <b>Les tests sont effectu&eacute;s sur le serveur : {$serveur}</b>
 
-<fieldset>
-	<legend>Test de la fonction php fopen</legend>
+<div style="clear:both;"></div>
+<fieldset style="float:left;height:150px;margin:5px;width:190px;">
+	<legend>Test avec fopen</legend>
 		<table>
 			<tr>
 				<td>Inclu dans la version php : </td><td>{if $myConnexion->fopen->actif}{$img_true}{else}{$img_false}{/if}</td>
@@ -13,12 +14,11 @@
 			<tr>
 				<td>Sera utilis&eacute; par d&eacute;faut : </td><td>{if $myConnexion->fopen->defaut}{$img_true}{else}{$img_false}{/if}</td>
 			</tr>
-		</table>
-	<br/><br/>{$backlink}
+		</table><br/>{$backlink}
 </fieldset>
 
-<fieldset>
-	<legend>Test de la librairie php cUrl</legend>
+<fieldset style="float:left;height:150px;margin:5px;width:190px;">
+	<legend>Test avec cUrl</legend>
 		<table>
 			<tr>
 				<td>Inclu dans la version php : </td><td>{if $myConnexion->curl->actif}{$img_true}{else}{$img_false}{/if}</td>
@@ -29,12 +29,11 @@
 			<tr>
 				<td>Sera utilis&eacute; par d&eacute;faut : </td><td>{if $myConnexion->curl->defaut}{$img_true}{else}{$img_false}{/if}</td>
 			</tr>
-		</table>
-	<br/><br/>{$backlink}
+		</table><br/>{$backlink}
 </fieldset>
 
-<fieldset>
-	<legend>Test de la fonction file_get_content</legend>
+<fieldset style="float:left;height:150px;margin:5px;width:190px;">
+	<legend>Test avec file_get_content</legend>
 		<table>
 			<tr>
 				<td>Inclu dans la version php : </td><td>{if $myConnexion->fileGetContent->actif}{$img_true}{else}{$img_false}{/if}</td>
@@ -45,12 +44,11 @@
 			<tr>
 				<td>Sera utilis&eacute; par d&eacute;faut : </td><td>{if $myConnexion->fileGetContent->defaut}{$img_true}{else}{$img_false}{/if}</td>
 			</tr>
-		</table>
-	<br/><br/>{$backlink}
+		</table><br/>{$backlink}
 </fieldset>
-{*
-<fieldset>
-	<legend>Test de la librairie php fsockopen</legend>
+
+<fieldset style="float:left;height:150px;margin:5px;width:190px;">
+	<legend>Test avec fsockopen</legend>
 		<table>
 			<tr>
 				<td>Inclu dans la version php : </td><td>{if $myConnexion->fsockopen->actif}{$img_true}{else}{$img_false}{/if}</td>
@@ -61,12 +59,12 @@
 			<tr>
 				<td>Sera utilis&eacute; par d&eacute;faut : </td><td>{if $myConnexion->fsockopen->defaut}{$img_true}{else}{$img_false}{/if}</td>
 			</tr>
-		</table>
-	<br/><br/>{$backlink}
+		</table><br/>{$backlink}
 </fieldset>
-*}
+
 {*
-<fieldset>
+
+<fieldset style="float:left;height:150px;margin:5px;width:190px;">
 	<legend>Test de l'image distante simple</legend>
 		
 		Ce test n&eacute;cessite tr&egrave;s peu d'autorisations mais emp&ecirc;che une automatisation pure du processus d'envoi de statistiques. De plus il est n&eacute;cessaire d'&ecirc;tre visible depuis le net afin de communiquer correctement avec le serveur. Dans le cas d'une installation type localhost cette fonction ne sera pas possible.
@@ -81,6 +79,6 @@
 		</table>
 		
 		Si les deux tests sont au vert alors le module utilisera cette fonction en dernier recours pour communiquer avec l'exterieur. Dans le cas contraire le module restera muet.
-		
-	<br/><br/>{$backlink} *}
+		<br/>{$backlink} *}
 </fieldset>
+<div style="clear:both;"></div>

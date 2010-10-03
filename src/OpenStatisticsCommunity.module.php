@@ -1,10 +1,10 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: OpenStatisticsCommunity - un client légé envoyant toute une série de 
-#         statistiques de manière anonyme sur l'utilisation faites de 
+# Module: OpenStatisticsCommunity - un client lege envoyant toute une serie de 
+#         statistiques de maniere anonyme sur l'utilisation faites de 
 #         Cms Made Simple. Pour toute information, consultez la page d'accueil 
-#         du projet : http://www.cmsmadesimple.fr/rts-client.html
-# Version: béta de Kevin Danezis Aka "Bess"
+#         du projet : http://www.cmsmadesimple.fr/statistiques
+# Version: beta de Kevin Danezis Aka "Bess"
 # Author can be join on the french forum : http://www.cmsmadesimple.fr/forum 
 #        or by email : statistiques [plop] cmsmadesimple [plap] fr
 # Method: OpenStatisticsCommunity.module.class
@@ -32,129 +32,71 @@
  
 class OpenStatisticsCommunity extends CMSModule
 {
-  
-  /**
-   * GetName()
-   * @return string class name
-   */
   function GetName()
   {
     return get_class($this);
   }
   
-  /**
-   * GetFriendlyName()
-   * @return string Friendly name for the module
-   */
   function GetFriendlyName()
   {
     return $this->Lang('friendlyname');
   }
 
-  
-  /**
-   * GetVersion()
-   * @return string version number 
-   */
   function GetVersion()
   {
-    return '0.1.4';
+    return '0.1.5';
   }
   
-  /**
-   * GetHelp()
-   * @return string Help for this module
-   */
   function GetHelp()
   {
     return $this->Lang('help');
   }
   
-  /**
-   * GetAuthor()
-   * @return string Author name
-   */
   function GetAuthor()
   {
     return 'Kevin Danezis (Bess)';
   }
 
-  /**
-   * GetAuthorEmail()
-   * @return string Authors email
-   */
   function GetAuthorEmail()
   {
     return 'besstiolle@gmail.com';
   }
   
-  /**
-   * GetChangeLog()
-   * @return string ChangeLog for this module
-   */
   function GetChangeLog()
   {
     return $this->Lang('changelog');
   }
   
-  /**
-   * IsPluginModule()
-   * @return bool True if this module can be included in page and or template
-   */
   function IsPluginModule()
   {
     return false;
   }
 
-  /**
-   * HasAdmin()
-   * @return bool True if this module has admin area
-   */
   function HasAdmin()
   {
     return true;
   }
 
-  /**
-   * GetAdminSection()
-   * @return string Which admin section this module belongs to
-   */
   function GetAdminSection()
   {
     return 'extensions';
   }
 
-  /**
-   * GetAdminDescription()
-   * @return string Module description
-   */
   function GetAdminDescription()
   {
     return $this->Lang('moddescription');
   }
 
-  /**
-   * VisibleToAdminUser()
-   * @return bool True if this module is shown to current user
-   */
   function VisibleToAdminUser()
   {
     return true;
   }
   
-  /**
-   * GetDependencies()
-   * @return hash Hash of other modules this module depends on
-   */
   function GetDependencies()
   {
     return array();
   }
 
-  /**
-   * MinimumCMSVersion()
-   * @return string Minimum cms version this module should work on
-   */
   function MinimumCMSVersion()
   {
     return "1.5";
@@ -174,7 +116,7 @@ class OpenStatisticsCommunity extends CMSModule
   }
   
 	/**
-	 * A vrai spécifie que la classe possède un appel à évenement
+	 * A vrai specifie que la classe possede un appel a evenement
 	 */
 	function HandlesEvents()
 	{
@@ -186,12 +128,16 @@ class OpenStatisticsCommunity extends CMSModule
 		global $gCms;
 		global $smarty;
 		
-		if($eventname == "LoginPost")
+		if($eventname == "LoginPost" )
 		{
+			//Verification que la connexion s'est bien deroulee
+			if(!$this->CheckPermission('Set Open Statistics Community Prefs'))
+				return;
+				
 			//On n'envois de rapport que tous les 10 jours
 			$db = &$gCms->GetDb();
 			$maxdate = $db->GetOne('SELECT max(osc_date_envoi) from '.cms_db_prefix().'module_openstatisticscommunity_historique');
-			//Si écart > 10 jours
+			//Si ecart > 10 jours
 			if ((time() - $this->_dbToDate($maxdate)) < (86400*10))
 			{
 				return;
@@ -215,43 +161,24 @@ class OpenStatisticsCommunity extends CMSModule
    * @returns a stdClass object with two properties.... priority (1->3)... and
    * html, which indicates the text to display for the Notification.
    */
- /* function GetNotificationOutput($priority=2) 
+  function GetNotificationOutput($priority=2) 
   {
 	global $gCms;
 	$db = &$gCms->GetDb();
-	$rcount = $db->GetOne('select count(*) from '.cms_db_prefix().'module_skeleton');
-    if ($priority < 4 && $rcount == 0 )
-      {
-	  $ret = new stdClass;
-	  $ret->priority = 2;
-	  $ret->html=$this->Lang('alert_no_records');
-	  return $ret;
-      }  
+	$rcount = $db->GetOne('SELECT osc_reponse FROM '.cms_db_prefix().'module_openstatisticscommunity_historique order by osc_date_envoi desc limit 0,1');
+	
+	if ($priority < 4 && $rcount != '0' )
+    {
+		$ret = new stdClass;
+		$ret->priority = 2;
+		$ret->html=$this->Lang('alert_not_send');
+		return $ret;
+    }  
 	return '';
-  }*/
+  }
 
   //PENSER A : get_module_path()
   
-  /**
-   * GetEventDescription()
-   * @param string Eventname
-   * @return string Description for event 
-   */
- /* function GetEventDescription ( $eventname )
-  {
-    return $this->Lang('event_info_shootbox'.$eventname );
-  }*/
-  
-  /**
-   * GetEventHelp()
-   * @param string Eventname
-   * @return string Help for event
-   */
-/*  function GetEventHelp ( $eventname )
-  {
-    return $this->Lang('event_help_shootbox'.$eventname );
-  }*/
-
   /**
    * InstallPostMessage()
    * @return string Message to be shown after installation
@@ -280,7 +207,7 @@ class OpenStatisticsCommunity extends CMSModule
   }
   
 	/**
-	* Transforme la date issue de la base en une véritable date php
+	* Transforme la date issue de la base en une veritable date php
 	**/
 	function _dbToDate($stringDate)
 	{
@@ -341,22 +268,21 @@ class OpenStatisticsCommunity extends CMSModule
 		204 => "Data not found",
 		500 => "Serveur indisponible pour une dur&eacute;e indetermin&eacute;e",
 		501 => "Serveur indisponible pour une courte dur&eacute;e",
-		503 => "Erreur interne inatendue"
+		503 => "Erreur interne innatendue"
 		);
 	}
 	
-	function _estLocalhost($urlTest)
+	function _estLocalhost($urlBase, $urlRepertoire)
 	{
 		$file = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'localhost';
 		
 		if(file_exists($file))
 		{
-			//return  "http://localhost/cms7-notation";
-			return "http://localhost/skeleton";
+			//return array("http://localhost","/cms7-notation");
+			return array("http://localhost","/skeleton");
 		} 
 		
-		return $urlTest;
-		
+		return array($urlBase, $urlRepertoire);
 	}
 }
 ?>

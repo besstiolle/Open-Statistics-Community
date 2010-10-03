@@ -1,13 +1,13 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: OpenStatisticsCommunity - un client légé envoyant toute une série de 
-#         statistiques de manière anonyme sur l'utilisation faites de 
+# Module: OpenStatisticsCommunity - un client lege envoyant toute une serie de 
+#         statistiques de maniere anonyme sur l'utilisation faites de 
 #         Cms Made Simple. Pour toute information, consultez la page d'accueil 
-#         du projet : http://www.cmsmadesimple.fr/rts-client.html
-# Version: béta de Kevin Danezis Aka "Bess"
+#         du projet : http://www.cmsmadesimple.fr/statistiques
+# Version: beta de Kevin Danezis Aka "Bess"
 # Author can be join on the french forum : http://www.cmsmadesimple.fr/forum 
 #        or by email : statistiques [plop] cmsmadesimple [plap] fr
-# Method: Utilitaire de connexion réseau
+# Method: Utilitaire de connexion reseau
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
 # This project's homepage is: http://www.cmsmadesimple.org
@@ -32,115 +32,97 @@
 
 if (!isset($gCms)) exit;
 
-// Vérification de la permission
+// Verification de la permission
 if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
   return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
 }
 
-function sendDatasFOpen($url,$data)
+function call($myConnexion,$url,$urlComplementaire)
 {
-	$data = str_replace(array('+','#','&'), array('%2B','%23','%26'), $data);
+	return "#01";
+
+	if ($myConnexion->fopen->defaut)
+		return callFopen($url.$urlComplementaire);
+	else if ($myConnexion->curl->defaut)
+		return callCurl($url.$urlComplementaire);
+	else if ($myConnexion->fileGetContent->defaut)
+		return callFilegetcontent($url.$urlComplementaire);
+	else if ($myConnexion->fsockopen->defaut)
+		return callFsockopen($url,$urlComplementaire);
 		
-	if(!ini_get('allow_url_fopen')) {
-		return "#01";
-	}
-	
-	$maxsize = 1000;
-	$size = strlen($data);
-	$nbpacket = ceil($size/$maxsize);
-	
-	//Récupération d'un Id de connexion
-	$sid = '';
-	$file = @fopen ("$url&new=$nbpacket", "r");
-	if (!$file) {return "#02";}
-	while (!feof ($file)) {$sid .= fgets ($file, 1024);}
-	fclose($file);
-	if($sid == "" || !is_numeric($sid)){echo "demande SID : $sid<br/>";return "#03";}
-		
-	//Connexions successives avec l'ID
-	for ($i = 1; $i <= $nbpacket; $i++)
-	{	
-		$partdata = substr($data,$maxsize * ($i-1), $maxsize);
-		$content = '';
-		$file = @fopen ("$url&sid=$sid&packet=$i&partdata=$partdata", "r");
-		if (!$file) {echo "toto";return "#04";}
-		while (!feof ($file)) {$content .= fgets ($file, 1024);}
-		fclose($file);
-		if($content != "0"){echo $content;return "#05";}
-	}
-	
-	return 0;
+
 }
 
-
-function sendDatasCURL($url,$data)
-{
-	$data = str_replace(array('+','#','&'), array('%2B','%23','%26'), $data);
-	
-	$maxsize = 1000;
-	$size = strlen($data);
-	$nbpacket = ceil($size/$maxsize);
-	
-	//Récupération d'un Id de connexion
-	$curl = curl_init();
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($curl, CURLOPT_URL, "$url&new=$nbpacket");
-	curl_setopt($curl, CURLOPT_HEADER, 0);
-	$sid = curl_exec($curl);
-	curl_close($curl);
-	if($sid == "" || !is_numeric($sid)){echo "demande SID : $sid<br/>";return "#03";}
-	
-	//Connexions successives avec l'ID
-	for ($i = 1; $i <= $nbpacket; $i++)
-	{	
-		$partdata = substr($data,$maxsize * ($i-1), $maxsize);
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_URL, "$url&sid=$sid&packet=$i&partdata=$partdata");
-		curl_setopt($curl, CURLOPT_HEADER, 0);
-		$content = curl_exec($curl);
-		curl_close($curl);
-		if($content != "0"){echo $content;return "#05";}
-	}
-	
-	return 0;
+function callFopen($url)
+{	
+	$response = "";
+	$handler = @fopen ($url, "r");
+	if (!$handler) {return "#02";}
+	while (!feof ($handler)) {$response .= fgets ($handler, 1024);}
+	fclose($handler);
+	return $response;
 }
 
-function sendDatasFGC($url,$data)
-{
-	$data = str_replace(array('+','#','&'), array('%2B','%23','%26'), $data);
-	
-	$maxsize = 1000;
-	$size = strlen($data);
-	$nbpacket = ceil($size/$maxsize);
-	
-	//Récupération d'un Id de connexion
-	$sid = file_get_contents("$url&new=$nbpacket");
-	if($sid == "" || !is_numeric($sid)){echo "demande SID : $sid<br/>";return "#03";}
-		
-	//Connexions successives avec l'ID
-	for ($i = 1; $i <= $nbpacket; $i++)
-	{	
-		$partdata = substr($data,$maxsize * ($i-1), $maxsize);
-		$content = file_get_contents("$url&sid=$sid&packet=$i&partdata=$partdata");
-		if($content != "0"){echo $content;return "#05";}
+function callCurl($url)
+{	
+	$response = "";
+	$handler = curl_init();
+	curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($handler, CURLOPT_URL, $url);
+	curl_setopt($handler, CURLOPT_HEADER, 0);
+	$response = curl_exec($handler);
+	curl_close($handler);
+	return $response;
+}
+
+function callFilegetcontent($url)
+{	
+	$response = file_get_contents($url);
+	return $response;
+}
+
+function callFsockopen($domaine,$urlComplementaire)
+{	
+	//Retrait des HTTP://
+	if(substr($domaine,0,7) == 'http://')
+	{
+		$domaine = substr($domaine,7);
 	}
 	
-	return 0;
+	$response = "";
+	$handler = @fsockopen($domaine, 80);
+	if (!$handler) {;return "#02";}
+
+	
+	stream_set_timeout($handler,2);        
+	fputs($handler, "GET /$urlComplementaire HTTP/1.0\r\n");		
+	fputs($handler, "Host: $domaine\r\n");
+	fputs($handler, "Connection: Close\r\n\r\n");
+	while (!feof ($handler)) {$response .= fgets ($handler, 1024);}
+	fclose($handler);
+	$response = substr($response,strpos($response,"\r\n\r\n")+4);
+	return $response;
 }
+
 
 function testConnexion($module,$smarty,$myConnexion)
 {
-	$hasDefault = false;
+	$myConnexion->hasDefault = false;
+	$reponseAttendue = ":)";
 	
-	$urlBase = $module->GetPreference("cryptageUrl");
-	$urlBase = $module->_estLocalhost($urlBase);
+	$urlBase = $module->GetPreference("cryptageUrl_Base");
+	$urlRepertoire = $module->GetPreference("cryptageUrl_Repertoire");
+	$retour =  $module->_estLocalhost($urlBase, $urlRepertoire);
+	$urlBase = $retour[0];
+	$urlRepertoire = $retour[1];
 
+	$urlComplementaire = "/modules/OpenStatisticsCommunityServer/testReseau.php";
+	$url = $urlBase.$urlRepertoire.$urlComplementaire;
+	
 	$smarty->assign('serveur', $urlBase);
 
-	$urlComplement = "/modules/OpenStatisticsCommunityServer/testReseau.php";
-	$urlTest = $urlBase.$urlComplement;
-
+	
+	
 	/** Test du mode de connexion Fopen **/
 	$myConnexion->fopen = new stdClass;
 	$myConnexion->fopen->actif = false;
@@ -148,20 +130,20 @@ function testConnexion($module,$smarty,$myConnexion)
 	$myConnexion->fopen->defaut = false;
 	if(@ini_get('allow_url_fopen')) {
 		$myConnexion->fopen->actif = true;
-		$file = @fopen ($urlTest, "r");
-		$content = "";
-		if ($file) {
-			while (!feof ($file)) {$content .= fgets ($file, 1024);}
-			fclose($file);
-			if($content != "")
-			{
-				$myConnexion->fopen->usable = true;
-				$myConnexion->fopen->defaut = true;
-				$hasDefault = true;
-			} 
+		if(callFopen($url) == $reponseAttendue)
+		{
+			$myConnexion->fopen->usable = true;
+			$myConnexion->fopen->defaut = true;
+			$myConnexion->hasDefault = true; 
 		}
 	} 
-
+	
+	/* ############## T E S T S ############## *//*
+	$myConnexion->hasDefault = false;
+	$myConnexion->fopen->defaut = false;
+	$myConnexion->curl->defaut = false;
+	$myConnexion->fileGetContent->defaut = false;*/
+	/* ############## T E S T S ############## */
 
 	/** Test du mode de connexion cUrl **/
 	$myConnexion->curl = new stdClass;
@@ -171,85 +153,61 @@ function testConnexion($module,$smarty,$myConnexion)
 
 	if(function_exists('curl_init')) {
 		$myConnexion->curl->actif = true;
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_URL, $urlTest);
-		curl_setopt($curl, CURLOPT_HEADER, 0);
-		$content = curl_exec($curl);
-		curl_close($curl);
-		if($content != "")
+		if(callCurl($url) == $reponseAttendue)
 		{
-			$myConnexion->curl->out = true;
-			if($content == "0");
-			{
-				$myConnexion->curl->usable = true;
-				if(!$hasDefault)
-				{	
-					$myConnexion->curl->defaut = true;
-					$hasDefault = true;
-				}
+			$myConnexion->curl->usable = true;
+			if(!$myConnexion->hasDefault)
+			{	
+				$myConnexion->curl->defaut = true;
+				$myConnexion->hasDefault = true;
 			}
 		} 
 	}
-	
 	
 	/** Test du mode de connexion file_get_contents **/
 	$myConnexion->fileGetContent = new stdClass;
 	$myConnexion->fileGetContent->actif = false;
 	$myConnexion->fileGetContent->usable = false;
 	$myConnexion->fileGetContent->defaut = false;
-	$content = @file_get_contents($urlTest);
-	$myConnexion->fileGetContent->actif = true;
-	if($content != "")
+	if(function_exists('file_get_contents'))
 	{
-		$myConnexion->fileGetContent->usable = true;
-		if(!$hasDefault)
-		{	
-			$myConnexion->fileGetContent->defaut = true;
-			$hasDefault = true;
-		}
-	} 
-	
-	
+		$myConnexion->fileGetContent->actif = true;
+		if(callFilegetcontent($url) == $reponseAttendue)
+		{
+			$myConnexion->fileGetContent->usable = true;
+			if(!$myConnexion->hasDefault)
+			{	
+				$myConnexion->fileGetContent->defaut = true;
+				$myConnexion->hasDefault = true;
+			}
+		} 
+	}
+
 
 	/** Test du mode de connexion fsockopen **/
 	$myConnexion->fsockopen = new stdClass;
 	$myConnexion->fsockopen->actif = false;
 	$myConnexion->fsockopen->usable = false;
 	$myConnexion->fsockopen->defaut = false;
-	
-	
-	//TODO : poursuivre le code avec fsockopen
-	/*
-	$file = @fsockopen("cmsmadesimple.fr", 80);
-	$content = "";
-	if ($file) {
+	if(function_exists('fsockopen'))
+	{
 		$myConnexion->fsockopen->actif = true;
-		stream_set_timeout($file,2);        
-		fputs($file, "GET /$urlComplement HTTP/1.0\r\n\r\n");		
-		while (!feof ($file)) {$content .= fgets ($file, 1024);}
-		fclose($file);
-		if($content != "")
+		if(callFsockopen($urlBase, $urlRepertoire.'/'.$urlComplementaire) == $reponseAttendue)
 		{
 			$myConnexion->fsockopen->usable = true;
-			if(!$hasDefault)
+			if(!$myConnexion->hasDefault)
 			{	
 				$myConnexion->fsockopen->defaut = true;
-				$hasDefault = true;
+				$myConnexion->hasDefault = true;
 			}
-			die($content);
-		} 
-	} else
-	{
-		die("Impossible d'ouvrir\n" . substr($urlBase,7));
-	}*/
-	
+		}
+	}	
 	
 	
 	/** Test du mode de connexion image simple **/
 	/*$myConnexion->img = new stdClass;
-	$myConnexion->img->url = "$urlTest&img=simple";
-	$myConnexion->img->urlrep = "$urlTest&img=retour";*/
+	$myConnexion->img->url = "$url&img=simple";
+	$myConnexion->img->urlrep = "$url&img=retour";*/
 	
 	return $myConnexion;
 }
