@@ -38,9 +38,6 @@ $osc =& $gCms->modules["OpenStatisticsCommunity"]['object'];
 
 if($osc->GetVersion() <= '0.0.3')
 {
-	//Suppression de param non utilise en 0.1.0
-	$this->RemovePreference("cryptageTmp");
-	
 	// 	Installation d'un module
 	$this->AddEventHandler('core','ModuleInstalled',true);
 	// 	Desinstallation d'un module
@@ -51,13 +48,11 @@ if($osc->GetVersion() <= '0.0.3')
 	$this->AddEventHandler('core','LoginPost',true);
 }
 
-if($osc->GetVersion() <= '0.1.4')
-{
-	//Suppression de param non utilise en 0.1.5
-	$this->RemovePreference("cryptageUrl");
-	$this->SetPreference("cryptageUrl_Base", "http://www.cmsmadesimple.fr");
-	$this->SetPreference("cryptageUrl_Repertoire", "");
-}
+$this->RemovePreference("cryptageTmp");
+$this->RemovePreference("cryptageUrl");
+$this->SetPreference("cryptageUrl_Base", "http://www.cmsmadesimple.fr");
+$this->SetPreference("cryptageUrl_Repertoire", "");
+
 
 //On lance les tests de reseau
 require_once(dirname(__FILE__).'/function.connexionTools.php');

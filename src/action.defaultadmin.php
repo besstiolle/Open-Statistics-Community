@@ -34,9 +34,14 @@ if (!isset($gCms)) exit;
 
 
 // Verification de la permission
-if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
-  return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
+if (! $this->VisibleToAdminUser()) {
+  echo $this->ShowErrors($this->Lang('accessdenied'));
+  return;
 }
+
+//Import des classes de fonctionnalités
+require_once(dirname(__FILE__).'/function.connexionTools.php');
+require_once(dirname(__FILE__).'/function.configurationTools.php');
 
 if (FALSE == empty($params['active_tab']))
 {
@@ -46,8 +51,6 @@ if (FALSE == empty($params['active_tab']))
 	$tab = '';
 }
 
-
-include_once(dirname(__FILE__).'/function.configurationTools.php');
 $statistique = getConfiguration();
 
 //On ajoute l'onglet Configuration + Historique
@@ -87,4 +90,8 @@ $smarty->assign('submit_report', $this->CreateInputSubmit($id, 'submit', $this->
 $smarty->assign_by_ref('module',$this);
 
 echo $this->ProcessTemplate('adminpanel.tpl');
+if(isset($_GET['debug']))
+{
+	$this->_debug();
+}
 ?>

@@ -33,8 +33,9 @@
 if (!isset($gCms)) exit;
 
 // Verification de la permission
-if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
-  return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
+if (! $this->VisibleToAdminUser()) {
+  echo $this->ShowErrors($this->Lang('accessdenied'));
+  return;
 }
 
 function getConfiguration()
@@ -45,8 +46,9 @@ function getConfiguration()
 				'config_info' => array(),
 				'php_information' => array(),
 				'server_info' => array(),
-				'permission_info' => array(
-				));
+				'permission_info' => array(),
+				'network_info' => array()
+				);
 		
 	clearstatcache();
 	
@@ -56,6 +58,7 @@ function getConfiguration()
 	$statistique = conf_php($statistique);
 	$statistique = conf_serveur($statistique);
 	$statistique = conf_permission($statistique);
+	$statistique = conf_network($statistique);
 	
 	return $statistique;
 }
@@ -132,6 +135,23 @@ function conf_permission($statistique)
 	$statistique['permission_info'] = array();
 	return $statistique;
 }
+
+function conf_network($statistique)
+{
+	global $gCms;
+	$oscs =& $gCms->modules["OpenStatisticsCommunity"]['object'];
+	$myConnexion = $oscs->GetPreference("cryptageMethode");
+	if($myConnexion == null)
+	{
+		$myConnexion = testConnexion($oscs,$smarty,new stdClass);
+		$oscs->SetPreference("cryptageMethode", serialize($myConnexion));
+	}
+	$statistique['network_info'] = $myConnexion;
+	return $statistique;
+
+}
+
+
 /**
  * @return object
  * @param string $title

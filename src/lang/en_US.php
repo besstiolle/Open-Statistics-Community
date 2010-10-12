@@ -10,6 +10,8 @@ $lang['upgraded'] = 'Module version %s updated';
 $lang['title_configuration'] = 'Client Configuration';
 $lang['title_historique'] = 'Transfer History';
 
+$lang['accessdenied'] = 'Access Denied';
+
 
 $lang['noCniDefined'] = 'No national identity card (NIC) is currently defined';
 $lang['back'] = 'Back to home';
@@ -30,6 +32,9 @@ $lang['allow_send_module_version'] = 'Version of modules';
 $lang['allow_send_config_information'] = 'Cms Made Simple configuration';
 $lang['allow_send_php_information'] = 'Php configuration';
 $lang['allow_send_server_information'] = 'Server configuration';
+$lang['allow_send_network_information'] = 'Network configuration';
+$lang['allow_send_network_information_text'] = 'Php function wich allow to communicate (fopen/fsockopen/cUrl/...)';
+
 //$lang['newsletter_email'] = 'Je souhaites recevoir la newsletter du projet (tapez votre mail perso)';
 //$lang['newsletter_origine'] = 'Texte de personnalisation de l\'email pour identifier le site d\'origine';
 //$lang['newsletter_alerte'] = 'Je demande &agrave; recevoir les alertes de s&eacute;curit&eacute; (d&eacute;tection de failles et autres)';
@@ -48,6 +53,8 @@ $lang['prefsupdated'] = 'Param&eacute;trage mis &agrave; jour';
 $lang['msgConnexionKO1'] = 'Impossible d\'utiliser le module sur votre installation car aucune m&eacute;thode ne permet de communiquer avec l\'exterieur';
 $lang['msgConnexionKO2'] = 'V&eacute;rifiez votre pare-feu et la configuration de votre proxy. Cette erreur arrive souvent lorsque l\'on d&eacute;veloppe son site internet en local (wamp, Xamp, easyPhp, ...) le probl&egrave;me se r&eacute;soud en g&eacute;n&eacute;ral une fois le site install&eacute; en ligne.';
 $lang['msgConnexionKO3'] = 'Vous pouvez &agrave; tout moment refaire un test de votre configuration en cliquant ici : ';
+
+$lang['no_connexion_allow'] = 'In this version of the module, we implemented various methods to communicate with servers. Apparently this is not enough for <b>your installation</b>. Tell on the <a href="http://www.cmsmadesimple.fr/forum/viewtopic.php?pid=17090#p17090">project\'s page</a> what happened to you, a developer will try to help you';
 
 $lang['moddescription'] = 'This module is a generator of anonymous usage statistics cmsmadesimple. More informations on <a href="http://www.cmsmadesimple.fr/forum/viewtopic.php?pid=17090#p17090">the project page</a>';
 
@@ -76,5 +83,5 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 <p>Copyright &amp;copy; 2009, Kevin Danezis aka &quot;Bess&quot; <a href="mailto:besstiolle@gmail.com"><besstiolle@gmail.com></a>. All Rights Are Reserved.</p>
 <p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU Public License</a>. You must agree to this license before using the module.</p>
 ';
-$lang['alert_not_send'] = 'The last attempt to send statistics to the server has a failure. You should take a look and see what it is.'
+$lang['alert_not_send'] = 'The last attempt to send statistics to the server has a failure. You should take a look and see what it is.';
 ?>

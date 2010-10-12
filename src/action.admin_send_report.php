@@ -33,8 +33,9 @@
 if (!isset($gCms)) exit;
 
 // Verification de la permission
-if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
-  return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
+if (! $this->VisibleToAdminUser()) {
+  echo $this->ShowErrors($this->Lang('accessdenied'));
+  return;
 }
 
 include(dirname(__FILE__).'/function.sendReport.php');

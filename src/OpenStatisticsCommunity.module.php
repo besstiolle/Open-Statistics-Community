@@ -44,7 +44,7 @@ class OpenStatisticsCommunity extends CMSModule
 
   function GetVersion()
   {
-    return '0.1.5';
+    return '0.1.6-beta1';
   }
   
   function GetHelp()
@@ -89,7 +89,7 @@ class OpenStatisticsCommunity extends CMSModule
 
   function VisibleToAdminUser()
   {
-    return true;
+    return $this->CheckPermission('Set Open Statistics Community Prefs');
   }
   
   function GetDependencies()
@@ -133,6 +133,16 @@ class OpenStatisticsCommunity extends CMSModule
 			//Verification que la connexion s'est bien deroulee
 			if(!$this->CheckPermission('Set Open Statistics Community Prefs'))
 				return;
+				
+			//Si aucune autorisation n'a été définie on est dans le cas d'une non-config = envoi
+			$autorisations = $this->GetPreference('autorisations');
+			if(isset($autorisations))
+			{
+				$autorisations = unserialize($autorisations);
+				//Si autorisation définie mais qu'on bloque les envois : on annule
+				if(!isset($autorisations['all']) || !$autorisations['all'])
+					return;
+			}
 				
 			//On n'envois de rapport que tous les 10 jours
 			$db = &$gCms->GetDb();
@@ -283,6 +293,34 @@ class OpenStatisticsCommunity extends CMSModule
 		} 
 		
 		return array($urlBase, $urlRepertoire);
+	}
+	
+	function _debug()
+	{
+		global $gCms;
+		$db = &$gCms->GetDb();
+		$result = $db->Execute('SELECT sitepref_name as name, sitepref_value as value  FROM '.cms_db_prefix().'siteprefs WHERE sitepref_name LIKE \'OpenStatisticsCommunity_%\'');
+		if ($result === false)
+		{
+			echo "Database error!";
+			exit;
+		}
+		
+		
+		echo "<table>\n";
+		while ($row = $result->FetchRow())
+		{
+			if(@is_array(@unserialize($row['value'])) || @is_object(@unserialize($row['value'])))
+			{
+				$val = print_r(unserialize($row['value']), true);
+				echo "<tr><td>".$row['name']." </td><td>".$val."</td></tr>\n";
+			}
+			else
+			{
+				echo "<tr><td>".$row['name']." </td><td>".$row['value']."</td></tr>\n";
+			}
+		}
+		echo "</table>\n";
 	}
 }
 ?>

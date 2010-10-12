@@ -33,13 +33,13 @@
 if (!isset($gCms)) exit;
 
 // Verification de la permission
-if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
-  return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
+if (! $this->VisibleToAdminUser()) {
+  echo $this->ShowErrors($this->Lang('accessdenied'));
+  return;
 }
 
 function call($myConnexion,$url,$urlComplementaire)
 {
-	return "#01";
 
 	if ($myConnexion->fopen->defaut)
 		return callFopen($url.$urlComplementaire);
@@ -50,6 +50,7 @@ function call($myConnexion,$url,$urlComplementaire)
 	else if ($myConnexion->fsockopen->defaut)
 		return callFsockopen($url,$urlComplementaire);
 		
+	return "#01";
 
 }
 
@@ -77,7 +78,7 @@ function callCurl($url)
 
 function callFilegetcontent($url)
 {	
-	$response = file_get_contents($url);
+	$response = @file_get_contents($url);
 	return $response;
 }
 

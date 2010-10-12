@@ -32,12 +32,16 @@
 if (!isset($gCms)) exit;
 
 // Verification de la permission
-if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
-  return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
+if (! $this->VisibleToAdminUser()) {
+  echo $this->ShowErrors($this->Lang('accessdenied'));
+  return;
 }
 
-//On lance les tests de reseau
+//Import des classes de fonctionnalités
 require_once(dirname(__FILE__).'/function.connexionTools.php');
+require_once(dirname(__FILE__).'/function.configurationTools.php');
+
+//On lance les tests de reseau
 $this->SetPreference("cryptageMethode", "");
 $myConnexion = testConnexion($this,$smarty,new stdClass);
 $this->SetPreference("cryptageMethode", serialize($myConnexion));

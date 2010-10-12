@@ -32,8 +32,9 @@
 if (!isset($gCms)) exit;
 
 // Verification de la permission
-if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
-  return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
+if (! $this->VisibleToAdminUser()) {
+  echo $this->ShowErrors($this->Lang('accessdenied'));
+  return;
 }
 
 if(isset($params['eraseCNI']))
@@ -144,6 +145,26 @@ $master->listeLigne[]	= $ligne;
 	
 $master->listeLigne[]	= $ligne;	
 
+	//Config reseau
+	$ligne = new stdclass;
+	$ligne->text  			= $this->Lang('allow_send_network_information');
+	$ligne->sslisteLigne	= array();
+	
+	//foreach($statistique['network_info'] as $key=>$element)
+	//{	
+	$key = 
+	
+		$ssligne = new stdclass;
+		$ssligneid	  		= "fct_reseau";
+		$newAut[$ssligneid]	= (!isset($autorisations[$ssligneid])?true:$autorisations[$ssligneid]);
+		$ssligne->input 	= $this->CreateInputCheckbox($id,$ssligneid,true,($newAut[$ssligneid]));
+		$ssligne->text  	= $this->Lang('allow_send_network_information_text');
+		
+		$ligne->sslisteLigne[] = $ssligne;
+	//}
+	
+$master->listeLigne[]	= $ligne;	
+
 // assign des valeurs pour le frontal des stats
 $smarty->assign('cni',($myCni!=null?$myCni:$this->Lang('noCniDefined')));
 $smarty->assign('master', $master);
@@ -174,7 +195,6 @@ $error_connexion = false;
 if($myConnexion == null)
 {
 	//On lance les tests de reseau
-	require_once(dirname(__FILE__).'/function.connexionTools.php');
 	$this->SetPreference("cryptageMethode", "");
 	$myConnexion = testConnexion($this,$smarty,new stdClass);
 	$this->SetPreference("cryptageMethode", serialize($myConnexion));

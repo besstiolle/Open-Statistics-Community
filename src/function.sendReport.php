@@ -32,8 +32,9 @@
 if (!isset($gCms)) exit;
 
 // Verification de la permission
-if (! $this->CheckPermission('Set Open Statistics Community Prefs')) {
-  return $this->DisplayErrorPage($id, $params, $returnid,$this->Lang('accessdenied'));
+if (! $this->VisibleToAdminUser()) {
+  echo $this->ShowErrors($this->Lang('accessdenied'));
+  return;
 }
 
 $db =& $gCms->GetDb();
@@ -47,8 +48,8 @@ if(!isset($autorisations['all']) || !$autorisations['all'])
 	return;
 }
 
-include_once(dirname(__FILE__).'/function.connexionTools.php');
-include_once(dirname(__FILE__).'/function.configurationTools.php');
+require_once(dirname(__FILE__).'/function.connexionTools.php');
+require_once(dirname(__FILE__).'/function.configurationTools.php');
 $statistique = getConfiguration();
 
 //On ne garde que les parties explicitement demandees.
@@ -90,10 +91,14 @@ foreach($statistique['server_info'] as $key=>$element)
 		unset($statistique['server_info'][$key]);	
 	}		
 }
+if(isset($statistique['network_info']['fct_reseau']) && (!isset($autorisations["fct_reseau"]) || !$autorisations["fct_reseau"]))
+{
+	unset($statistique['network_info']['fct_reseau']);	
+}	
 
 $myConnexion = unserialize($this->GetPreference("cryptageMethode"));
 if(!$myConnexion->hasDefault){
-	$smarty->assign("message","seuls fopen() - get_file_content() - cUrl() - fsockopen() sont impl&eacute;ment&eacute;s dans cette version du module pour communiquer avec les serveurs, Pr&eacute;venez sur le forum que le d&eacute;veloppeur puisse vous aider");
+	$smarty->assign("message",$this->Lang('no_connexion_allow'));
 	return;
 }
 
@@ -130,7 +135,7 @@ if(!isset($cle) || empty($cle) || !isset($CNI) || empty($CNI))
 		$this->SetPreference("cryptageCNI", $CNI);
 	} else
 	{
-		$smarty->assign("message","Mauvaise r&eacute;ponse du serveur : $data");
+		$smarty->assign("message","Mauvaise r&eacute;ponse du serveur : $content");
 		makelog($db, $osc, "askCNI ko" , "manuel");
 		return;
 	}
