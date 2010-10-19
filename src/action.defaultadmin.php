@@ -39,7 +39,7 @@ if (! $this->VisibleToAdminUser()) {
   return;
 }
 
-//Import des classes de fonctionnalités
+//Import des classes de fonctionnalites
 require_once(dirname(__FILE__).'/function.connexionTools.php');
 require_once(dirname(__FILE__).'/function.configurationTools.php');
 

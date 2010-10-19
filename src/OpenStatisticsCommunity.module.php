@@ -134,12 +134,12 @@ class OpenStatisticsCommunity extends CMSModule
 			if(!$this->CheckPermission('Set Open Statistics Community Prefs'))
 				return;
 				
-			//Si aucune autorisation n'a été définie on est dans le cas d'une non-config = envoi
+			//Si aucune autorisation n'a ete definie on est dans le cas d'une non-config = envoi
 			$autorisations = $this->GetPreference('autorisations');
 			if(isset($autorisations))
 			{
 				$autorisations = unserialize($autorisations);
-				//Si autorisation définie mais qu'on bloque les envois : on annule
+				//Si autorisation definie mais qu'on bloque les envois : on annule
 				if(!isset($autorisations['all']) || !$autorisations['all'])
 					return;
 			}
