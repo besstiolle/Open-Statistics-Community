@@ -36,27 +36,31 @@ if (!isset($gCms)) exit;
 $db =& $gCms->GetDb();
 $osc =& $gCms->modules["OpenStatisticsCommunity"]['object'];
 
+if(!isset($osc))
+	return;
+
+
 if($osc->GetVersion() <= '0.0.3')
 {
 	// 	Installation d'un module
-	$this->AddEventHandler('core','ModuleInstalled',true);
+	$osc->AddEventHandler('core','ModuleInstalled',true);
 	// 	Desinstallation d'un module
-	$this->AddEventHandler('core','ModuleUninstalled',true);
+	$osc->AddEventHandler('core','ModuleUninstalled',true);
 	// 	Mise a jour d'un module
-	$this->AddEventHandler('core','ModuleUpgraded',true);
+	$osc->AddEventHandler('core','ModuleUpgraded',true);
 	// 	Login (sous reserve d'une inaction depuis 10 jours)
-	$this->AddEventHandler('core','LoginPost',true);
+	$osc->AddEventHandler('core','LoginPost',true);
 }
 
-$this->RemovePreference("cryptageTmp");
-$this->RemovePreference("cryptageUrl");
-$this->SetPreference("cryptageUrl_Base", "http://www.cmsmadesimple.fr");
-$this->SetPreference("cryptageUrl_Repertoire", "");
+$osc->RemovePreference("cryptageTmp");
+$osc->RemovePreference("cryptageUrl");
+$osc->SetPreference("cryptageUrl_Base", "http://www.cmsmadesimple.fr");
+$osc->SetPreference("cryptageUrl_Repertoire", "");
 
 
 //On lance les tests de reseau
 require_once(dirname(__FILE__).'/function.connexionTools.php');
-$this->SetPreference("cryptageMethode", "");
-$myConnexion = testConnexion($this,$smarty,new stdClass);
-$this->SetPreference("cryptageMethode", serialize($myConnexion));
+$osc->SetPreference("cryptageMethode", "");
+$myConnexion = testConnexion($osc,$smarty,new stdClass);
+$osc->SetPreference("cryptageMethode", serialize($myConnexion));
 ?>

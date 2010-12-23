@@ -44,7 +44,7 @@ class OpenStatisticsCommunity extends CMSModule
 
   function GetVersion()
   {
-    return '0.1.6-beta1';
+    return '0.1.6-beta3';
   }
   
   function GetHelp()
@@ -104,7 +104,7 @@ class OpenStatisticsCommunity extends CMSModule
   
    function MaximumCMSVersion()
   {
-    return "1.9";
+    return "1.9.9";
   }
   
   /**
