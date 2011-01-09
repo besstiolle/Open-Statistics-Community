@@ -4,16 +4,22 @@
 #         statistiques de maniere anonyme sur l'utilisation faites de 
 #         Cms Made Simple. Pour toute information, consultez la page d'accueil 
 #         du projet : http://www.cmsmadesimple.fr/statistiques
-# Version: beta de Kevin Danezis Aka "Bess"
+#
+# Version: de Kevin Danezis Aka "Bess"
 # Author can be join on the french forum : http://www.cmsmadesimple.fr/forum 
-#        or by email : statistiques [plop] cmsmadesimple [plap] fr
-# Method: OpenStatisticsCommunity.module.class
+#        or by email : contact [plop] furie [plap] be
+#
+# The module's download page is : http://dev.cmsmadesimple.org/project/files/908
+# The module's demo page is : http://www.cmsmadesimple.fr/statistiques
+#
+# The discussion page around the module : http://www.cmsmadesimple.fr/forum/viewtopic.php?id=2908
+# The author's GIT page is : http://github.com/besstiolle
+# The module's GIT page is : http://github.com/besstiolle/xxxxx
+# The module's SVN page is : N/A
+#
 #-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
+# CMS - CMS Made Simple is (c) 2004-2011 by Ted Kulp (wishy@cmsmadesimple.org)
 # This project's homepage is: http://www.cmsmadesimple.org
-# The module's homepage is: http://www.cmsmadesimple.fr/forum/viewtopic.php?id=2908
-# The module's forge id : http://dev.cmsmadesimple.org/projects/osc
-# The statistiques homepage is: http://www.cmsmadesimple.fr/statistiques
 #-------------------------------------------------------------------------
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +50,7 @@ class OpenStatisticsCommunity extends CMSModule
 
   function GetVersion()
   {
-    return '0.1.6-beta3';
+    return '0.1.6';
   }
   
   function GetHelp()
@@ -59,7 +65,7 @@ class OpenStatisticsCommunity extends CMSModule
 
   function GetAuthorEmail()
   {
-    return 'besstiolle@gmail.com';
+    return 'contact@furie.be';
   }
   
   function GetChangeLog()
