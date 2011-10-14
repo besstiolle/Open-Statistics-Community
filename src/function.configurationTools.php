@@ -110,12 +110,18 @@ function conf_permission($statistique)
 function conf_network($statistique)
 {
 	global $gCms;
-	$oscs =& $gCms->modules["OpenStatisticsCommunity"]['object'];
-	$myConnexion = $oscs->GetPreference("cryptageMethode");
+	if(isset($gCms->modules))
+	{
+		$osc = $gCms->modules['OpenStatisticsCommunity']['object'];
+	} else {
+		$modops = cmsms()->GetModuleOperations();
+		$osc = $modops->get_module_instance("OpenStatisticsCommunity");
+	}
+	$myConnexion = $osc->GetPreference("cryptageMethode");
 	if($myConnexion == null)
 	{
-		$myConnexion = testConnexion($oscs,$smarty,new stdClass);
-		$oscs->SetPreference("cryptageMethode", serialize($myConnexion));
+		$myConnexion = testConnexion($osc,$smarty,new stdClass);
+		$osc->SetPreference("cryptageMethode", serialize($myConnexion));
 	}
 	$statistique['network_info'] = $myConnexion;
 	return $statistique;

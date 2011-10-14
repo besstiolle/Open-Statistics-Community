@@ -38,6 +38,11 @@
  
 class OpenStatisticsCommunity extends CMSModule
 {
+  function __construct()
+  {
+	parent::__construct();
+  }
+	
   function GetName()
   {
     return get_class($this);
@@ -50,7 +55,7 @@ class OpenStatisticsCommunity extends CMSModule
 
   function GetVersion()
   {
-    return '0.1.6';
+    return '0.2.0';
   }
   
   function GetHelp()
@@ -105,12 +110,12 @@ class OpenStatisticsCommunity extends CMSModule
 
   function MinimumCMSVersion()
   {
-    return "1.5";
+    return "1.9.4.1"; 
   }
   
    function MaximumCMSVersion()
   {
-    return "1.9.9";
+    return "1.10.9";
   }
   
   /**

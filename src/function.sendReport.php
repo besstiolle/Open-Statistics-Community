@@ -9,7 +9,14 @@ if (! $this->VisibleToAdminUser()) {
 }
 
 $db =& $gCms->GetDb();
-$osc =& $gCms->modules["OpenStatisticsCommunity"]['object'];
+
+if(isset($gCms->modules))
+{
+    $osc = $gCms->modules['OpenStatisticsCommunity']['object'];
+} else {
+	$modops = cmsms()->GetModuleOperations();
+	$osc = $modops->get_module_instance("OpenStatisticsCommunity");
+}
 
 //Verification des directives utilisateurs
 $autorisations = unserialize($this->GetPreference('autorisations'));

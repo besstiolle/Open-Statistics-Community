@@ -1,10 +1,20 @@
 <?php
+
+
 if (!isset($gCms)) exit;
 
 $db =& $gCms->GetDb();
-$osc =& $gCms->modules["OpenStatisticsCommunity"]['object'];
 
-if(!isset($osc))
+if(isset($gCms->modules))
+{
+    $osc = $gCms->modules['OpenStatisticsCommunity']['object'];
+} else {
+    $modops = cmsms()->GetModuleOperations();
+	$osc = $modops->get_module_instance("OpenStatisticsCommunity");
+}
+
+
+if(!isset($osc) || $osc == null)
 	return;
 
 $current_version = $oldversion;
